@@ -3,16 +3,15 @@ const moment = require('moment');
 const bcrypt=require('bcrypt');
 const jwt = require('jsonwebtoken');
 
-const {checkExistingUser,insertIntoTable} =require('../common/commonFunction');
+const {checkExistingUser,insertIntoTable,getUserDetailsBasedOnEmail} =require('../common/commonFunction');
 const { emailValidation, firstLastNameValidation, numberValidation } = require('../common/commonValidator');
 const { databaseConnection } = require('../common/connection');
 const { tables } = require('../common/tableAlias');
 
-
+let SECRET_KEY="dahfa";
 const signUp=async (req,res)=>{
     const{firstName,lastName,email,mobileNo,password}=req.body;
     try{
-        console.log(moment.utc().format("YYYY-MM-DD"))
         if(!emailValidation(email))
         {
             return res.status(400).json({message:"Please provide valid email address."})
@@ -48,7 +47,7 @@ const signUp=async (req,res)=>{
                 Created_On:moment.utc().format("YYYY-MM-DD")
             }
             let userId=await insertIntoTable(databaseConnection,data,tables.userBasicDetails);
-            let token=jwt.sign({ userId:userId,email: email }, 'shhhhh');
+            let token=jwt.sign({ userId:userId,email: email }, SECRET_KEY);
             return res.status(201).json({userId:userId,token:token});
 
         }
@@ -66,8 +65,34 @@ const signUp=async (req,res)=>{
     }
 }
 
-const signIn=(req,res)=>{
+const signIn=async(req,res)=>{
+    const {email,password}=req.body;
+    try{
+        let userDetails=await getUserDetailsBasedOnEmail(databaseConnection,email);
+        if(userDetails)
+        {
+            if(userDetails.length==0)
+            {
+                return res.status(404).json({message:"User not found"});
+            }
+            else{
+                const matchPassword=await bcrypt.compare(password,userDetails.Password);
+                if(!matchPassword)
+                {
+                    return res.status(400).json({message:"Invalid Credentials"});
+                }
+                let token=jwt.sign({ userId:userId,email: email }, SECRET_KEY);
+                return res.status(201).json({userId:userId,token:token});
+            }
+        }
+        else{
+            return res.status(500).json({message:"Something went wrong please try again."});
+        }
+    }
+    catch(e)
+    {
 
+    }
 }
 
 module.exports={signUp,signIn};

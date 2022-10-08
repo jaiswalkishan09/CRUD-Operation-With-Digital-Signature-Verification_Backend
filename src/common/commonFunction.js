@@ -30,6 +30,30 @@ async function checkExistingUser(databaseConnection,email)
     }
 }
 
+
+async function getUserDetailsBasedOnEmail(databaseConnection,email)
+{
+    try{
+        return(
+            databaseConnection(tables.userBasicDetails)
+            .select('*')
+            .where('Email',email)
+            .then(data=>{
+               return data;
+            })
+            .catch(e=>{
+                console.log("Error in getUserDetailsBasedOnEmail .catch block",e);
+                throw(e);
+            })
+        )
+    }
+    catch(e)
+    {
+        console.log("Error in getUserDetailsBasedOnEmail main catch block",e);
+        return false;
+    }
+}
+
 async function insertIntoTable(databaseConnection,data,tableName)
 {
     try{
@@ -54,5 +78,6 @@ async function insertIntoTable(databaseConnection,data,tableName)
 
 module.exports={
     checkExistingUser,
-    insertIntoTable
+    insertIntoTable,
+    getUserDetailsBasedOnEmail
 }
