@@ -76,13 +76,14 @@ const signIn=async(req,res)=>{
                 return res.status(404).json({message:"User not found"});
             }
             else{
+                userDetails=userDetails[0];
                 const matchPassword=await bcrypt.compare(password,userDetails.Password);
                 if(!matchPassword)
                 {
                     return res.status(400).json({message:"Invalid Credentials"});
                 }
-                let token=jwt.sign({ userId:userId,email: email }, SECRET_KEY);
-                return res.status(201).json({userId:userId,token:token});
+                let token=jwt.sign({ userId:userDetails.User_Id,email: email }, SECRET_KEY);
+                return res.status(201).json({userId:userDetails.User_Id,token:token});
             }
         }
         else{
@@ -91,7 +92,8 @@ const signIn=async(req,res)=>{
     }
     catch(e)
     {
-
+        console.log("Error in signin main catch block",e);
+        return res.status(500).json({message:"Something went wrong please try again."});
     }
 }
 
