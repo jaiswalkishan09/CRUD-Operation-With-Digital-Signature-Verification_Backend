@@ -12,3 +12,6 @@
 5. Don't save the private key in the backend.
 6. Please also create a client (No extensive UI Required) to demo the CRUD
    and POST /verify route
+
+Tables Neeed to be created:
+CREATE TABLE `sql6525042`.`user_basic_details` ( `User_Id` INT(11) NOT NULL AUTO_INCREMENT , `First_Name` VARCHAR(50) NOT NULL , `Last_Name` VARCHAR(50) NOT NULL , `Email` VARCHAR(100) NOT NULL , `Mobile_No` VARCHAR(50) NOT NULL , `Created_On` DATE NOT NULL , `Updated_On` DATETIME NULL , `Created_By` INT(11) NOT NULL , `Updated_By` INT(11) NULL DEFAULT NULL , PRIMARY KEY (`User_Id`)) ENGINE = InnoDB;
