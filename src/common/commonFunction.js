@@ -1,3 +1,5 @@
+const _sodium = require('libsodium-wrappers');
+
 // require table alias
 const { tables } = require('./tableAlias');
 
@@ -76,8 +78,81 @@ async function insertIntoTable(databaseConnection,data,tableName)
 
 }
 
+
+
+async function generatePublicAndPrivateKeyUsingLibSodium()
+{
+    try{
+        await _sodium.ready;
+        const sodium = _sodium;
+        let keyDetails=sodium.crypto_sign_keypair();
+        let publicKey=keyDetails['publicKey'];
+        let privateKey=keyDetails['privateKey'];
+
+        publicKey=sodium.to_base64(publicKey);
+        privateKey=sodium.to_base64(privateKey);
+
+        return {publicKey:publicKey,privateKey:privateKey}
+
+        //used for generating sign
+        // let signature=sodium.crypto_sign_detached(m,privateKey,"uint8array",publicKey);
+    }
+    catch(e)
+    {
+        console.log("Error in generatePublicAndPrivateKeyUsingLibSodium main catch block",e);
+        return false;
+    }
+}
+
+async function verifySignature(signature,message,publicKey)
+{
+    try{
+        await _sodium.ready;
+        const sodium = _sodium;
+        publicKey=sodium.from_base64(publicKey);
+        signature=sodium.from_base64(signature);
+        let signatureVerify=sodium.crypto_sign_verify_detached(signature,message,publicKey);
+        if(signatureVerify)
+        {
+            return "Success";
+        }
+        return "Failed";
+    }
+    catch(e)
+    {
+        console.log("Error in verifySignature main catch block",e);
+        return "Error";
+    }
+}
+
+async function updateIntoTable(databaseConnection,data,tableName,userId)
+{
+    try{
+        return(
+            databaseConnection(tableName)
+            .update(data)
+            .where('User_Id',userId)
+            .then(userId=>{
+                return userId[0];
+            })
+            .catch(e=>{
+                throw e;
+            })
+        )
+    }
+    catch(e)
+    {
+        console.log("Error in insertIntoTable main catch block.",e);
+        return false;
+    }
+
+}
+
 module.exports={
     checkExistingUser,
     insertIntoTable,
-    getUserDetailsBasedOnEmail
+    getUserDetailsBasedOnEmail,
+    generatePublicAndPrivateKeyUsingLibSodium,
+    verifySignature,
+    updateIntoTable
 }

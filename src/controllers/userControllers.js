@@ -3,7 +3,7 @@ const moment = require('moment');
 const bcrypt=require('bcrypt');
 const jwt = require('jsonwebtoken');
 
-const {checkExistingUser,insertIntoTable,getUserDetailsBasedOnEmail} =require('../common/commonFunction');
+const {checkExistingUser,insertIntoTable,getUserDetailsBasedOnEmail,generatePublicAndPrivateKeyUsingLibSodium,updateIntoTable} =require('../common/commonFunction');
 const { emailValidation, firstLastNameValidation, numberValidation } = require('../common/commonValidator');
 const { databaseConnection } = require('../common/connection');
 const { tables } = require('../common/tableAlias');
@@ -37,18 +37,24 @@ const signUp=async (req,res)=>{
         if(userExist=="User don't exist")
         {
             const hashPassword= await bcrypt.hash(password, 10);
+            let keys=await generatePublicAndPrivateKeyUsingLibSodium();
+            if(!keys)
+            {
+                throw("error");
+            }
+            const {publicKey,privateKey}=keys;
             let data={
                 First_Name:firstName,
                 Last_Name:lastName,
                 Email:email,
                 Mobile_No:mobileNo,
                 Password:hashPassword,
-                Public_Key:"12345",
+                Public_Key:publicKey,
                 Created_On:moment.utc().format("YYYY-MM-DD")
             }
             let userId=await insertIntoTable(databaseConnection,data,tables.userBasicDetails);
             let token=jwt.sign({ userId:userId,email: email }, SECRET_KEY);
-            return res.status(201).json({userId:userId,token:token});
+            return res.status(201).json({userId:userId,token:token,publicKey:publicKey,privateKey:privateKey});
 
         }
         else if(userExist=="User exist"){
@@ -82,8 +88,16 @@ const signIn=async(req,res)=>{
                 {
                     return res.status(400).json({message:"Invalid Credentials"});
                 }
+                let keys=await generatePublicAndPrivateKeyUsingLibSodium();
+                if(!keys)
+                {
+                    throw("error");
+                }
+                const {publicKey,privateKey}=keys;
+                let data={"Public_Key":publicKey};
+                let userId=await insertIntoTable(databaseConnection,data,tables.userBasicDetails,userDetails.User_Id);
                 let token=jwt.sign({ userId:userDetails.User_Id,email: email }, SECRET_KEY);
-                return res.status(201).json({userId:userDetails.User_Id,token:token});
+                return res.status(201).json({userId:userDetails.User_Id,token:token,publicKey:publicKey,privateKey:privateKey});
             }
         }
         else{
