@@ -94,8 +94,8 @@ const signIn=async(req,res)=>{
                     throw("error");
                 }
                 const {publicKey,privateKey}=keys;
-                let data={"Public_Key":publicKey};
-                let userId=await insertIntoTable(databaseConnection,data,tables.userBasicDetails,userDetails.User_Id);
+                let data={"Public_Key":publicKey,Updated_On:moment.utc().format("YYYY-MM-DD"),Updated_By:userDetails.User_Id};
+                let userId=await updateIntoTable(databaseConnection,data,tables.userBasicDetails,userDetails.User_Id);
                 let token=jwt.sign({ userId:userDetails.User_Id,email: email }, SECRET_KEY);
                 return res.status(201).json({userId:userDetails.User_Id,token:token,publicKey:publicKey,privateKey:privateKey});
             }
