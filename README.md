@@ -15,3 +15,5 @@
 
 Tables Neeed to be created:
 CREATE TABLE `sql6525042`.`user_basic_details` ( `User_Id` INT(11) NOT NULL AUTO_INCREMENT , `First_Name` VARCHAR(50) NOT NULL , `Last_Name` VARCHAR(50) NOT NULL , `Email` VARCHAR(100) NOT NULL , `Mobile_No` VARCHAR(50) NOT NULL , `Created_On` DATE NOT NULL , `Updated_On` DATETIME NULL , `Created_By` INT(11) NOT NULL , `Updated_By` INT(11) NULL DEFAULT NULL , PRIMARY KEY (`User_Id`)) ENGINE = InnoDB;
+
+ALTER TABLE `user_basic_details` ADD `Password` VARCHAR(1000) NOT NULL AFTER `Mobile_No`, ADD `Public_Key` VARCHAR(1000) NOT NULL AFTER `Password`;
