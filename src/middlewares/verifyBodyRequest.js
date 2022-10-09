@@ -35,6 +35,7 @@ const verifyBodyRequest=async(req,res,next)=>{
             }
         }
         else{
+            databaseConnection?databaseConnection.destroy():null;
             return res.status(400).json({message:"Bad Request."});
         }
     }
