@@ -10,7 +10,6 @@ const dbConnection=require("../common/connection")
 const getUserDetails=async (req,res)=>{
     let connectDb= await dbConnection.getDataBaseConnection();
     const databaseConnection  =knex(connectDb.connection);
-    // console.log(databaseConnection);
     try{
         let userId=req.userId;
         return(

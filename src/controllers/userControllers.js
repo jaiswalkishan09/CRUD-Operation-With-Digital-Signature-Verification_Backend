@@ -10,8 +10,10 @@ const { emailValidation, firstLastNameValidation, numberValidation } = require('
 const { tables } = require('../common/tableAlias');
 const dbConnection=require("../common/connection")
 
-let SECRET_KEY="dahfa";
+
+
 const signUp=async (req,res)=>{
+    let SECRET_KEY=process.env.SECRET_KEY;
     const{firstName,lastName,email,mobileNo,password}=req.body;
     let connectDb= await dbConnection.getDataBaseConnection();
     const databaseConnection  =knex(connectDb.connection);
@@ -85,6 +87,7 @@ const signUp=async (req,res)=>{
 }
 
 const signIn=async(req,res)=>{
+    let SECRET_KEY=process.env.SECRET_KEY;
     let connectDb= await dbConnection.getDataBaseConnection();
     const databaseConnection  =knex(connectDb.connection);
     const {email,password}=req.body;

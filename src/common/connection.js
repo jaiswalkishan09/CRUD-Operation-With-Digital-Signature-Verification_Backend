@@ -5,10 +5,10 @@ async function getDataBaseConnection()
     connection:{
       client: 'mysql',
       connection: {
-        host : 'sql6.freesqldatabase.com',
-        user : 'sql6525042',
-        password : 'bkgcc7v1LK',
-        database : 'sql6525042'
+        host : process.env.MYSQL_HOST,
+        user : process.env.MYSQL_USER,
+        password : process.env.MYSQL_PASSWORD,
+        database : process.env.MYSQL_DATABASE
       },
       pool: { min: 0, max: 10 },
       acquireConnectionTimeout: 10000
