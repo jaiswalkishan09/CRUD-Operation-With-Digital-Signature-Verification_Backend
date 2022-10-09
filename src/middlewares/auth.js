@@ -1,8 +1,7 @@
 const jwt = require('jsonwebtoken');
 
-let SECRET_KEY="dahfa";
 const auth=(req,res,next)=>{
-
+    let SECRET_KEY=process.env.SECRET_KEY;
     try{
         let token=req.headers.authorization;
         if(token){
