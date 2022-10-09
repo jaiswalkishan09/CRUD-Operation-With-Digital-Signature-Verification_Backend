@@ -1,9 +1,16 @@
+const moment = require('moment');
+// require knex for database connection
+var knex = require('knex');
+
 const { tables } = require('../common/tableAlias');
 const {updateIntoTable,getUserDetailsBasedOnUserId} =require('../common/commonFunction');
 const {  firstLastNameValidation, numberValidation } = require('../common/commonValidator');
+const dbConnection=require("../common/connection")
 
 const getUserDetails=async (req,res)=>{
-    const { databaseConnection } = require('../common/connection')
+    let connectDb= await dbConnection.getDataBaseConnection();
+    const databaseConnection  =knex(connectDb.connection);
+    // console.log(databaseConnection);
     try{
         let userId=req.userId;
         return(
@@ -32,8 +39,10 @@ const getUserDetails=async (req,res)=>{
 }
 
 const updateUserDetails = async(req,res)=>{
-    const{userId,firstName,lastName,mobileNo}=req.body;
-    const { databaseConnection } = require('../common/connection')
+    const{firstName,lastName,mobileNo}=req.body;
+    let userId=req.userId;
+    let connectDb= await dbConnection.getDataBaseConnection();
+    const databaseConnection  =knex(connectDb.connection);
     try{
         if(!firstName || !firstLastNameValidation(firstName))
         {
@@ -55,6 +64,7 @@ const updateUserDetails = async(req,res)=>{
             Updated_On:moment.utc().format("YYYY-MM-DD"),
             Updated_By:userId
         }
+        console.log(data)
         let updateResponse=await updateIntoTable(databaseConnection,data,tables.userBasicDetails,userId);
         if(updateResponse)
         {
@@ -75,8 +85,9 @@ const updateUserDetails = async(req,res)=>{
 }
 
 const deleteUser=async(req,res)=>{
-    const { databaseConnection } = require('../common/connection')
-    const {userId}=req.body;
+    let connectDb= await dbConnection.getDataBaseConnection();
+    const databaseConnection  =knex(connectDb.connection);
+    const userId=req.userId;
     try{
         return(
             databaseConnection(tables.userBasicDetails)
@@ -101,9 +112,11 @@ const deleteUser=async(req,res)=>{
 
 
 const verifyMessage=async(req,res)=>{
-    const { databaseConnection } = require('../common/connection')
+    let connectDb= await dbConnection.getDataBaseConnection();
+    const databaseConnection  =knex(connectDb.connection);
     let signature=req.headers.signature;
-    let {message,userId}=req.body;
+    let {message}=req.body;
+    let userId=req.userId;
     try{
         let userDetails=await getUserDetailsBasedOnUserId(databaseConnection,userId);
         let publicKey=userDetails['Public_Key'];

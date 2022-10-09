@@ -133,7 +133,7 @@ async function updateIntoTable(databaseConnection,data,tableName,userId)
             .update(data)
             .where('User_Id',userId)
             .then(userId=>{
-                return userId[0];
+                return userId;
             })
             .catch(e=>{
                 throw e;
@@ -142,7 +142,7 @@ async function updateIntoTable(databaseConnection,data,tableName,userId)
     }
     catch(e)
     {
-        console.log("Error in insertIntoTable main catch block.",e);
+        console.log("Error in updateIntoTable main catch block.",e);
         return false;
     }
 
