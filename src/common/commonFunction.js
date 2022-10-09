@@ -148,11 +148,36 @@ async function updateIntoTable(databaseConnection,data,tableName,userId)
 
 }
 
+
+async function getUserDetailsBasedOnUserId(databaseConnection,userId)
+{
+    try{
+        return(
+            databaseConnection(tables.userBasicDetails)
+            .select('*')
+            .where('User_Id',userId)
+            .then(data=>{
+               return data[0];
+            })
+            .catch(e=>{
+                console.log("Error in getUserDetailsBasedOnUserId .catch block",e);
+                throw(e);
+            })
+        )
+    }
+    catch(e)
+    {
+        console.log("Error in getUserDetailsBasedOnUserId main catch block",e);
+        return false;
+    }
+}
+
 module.exports={
     checkExistingUser,
     insertIntoTable,
     getUserDetailsBasedOnEmail,
     generatePublicAndPrivateKeyUsingLibSodium,
     verifySignature,
-    updateIntoTable
+    updateIntoTable,
+    getUserDetailsBasedOnUserId
 }

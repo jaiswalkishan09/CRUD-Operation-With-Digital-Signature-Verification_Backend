@@ -12,23 +12,23 @@ let SECRET_KEY="dahfa";
 const signUp=async (req,res)=>{
     const{firstName,lastName,email,mobileNo,password}=req.body;
     try{
-        if(!emailValidation(email))
+        if(!email || !emailValidation(email))
         {
             return res.status(400).json({message:"Please provide valid email address."})
         }
-        if(password.length<8)
+        if(!password || password.length<8)
         {
             return res.status(400).json({message:"Please provide valid password containing at least 8 characters."})
         }
-        if(!firstLastNameValidation(firstName))
+        if(!firstName || !firstLastNameValidation(firstName))
         {
             return res.status(400).json({message:"Please provide valid first name."})
         }
-        if(!firstLastNameValidation(lastName))
+        if(!lastName || !firstLastNameValidation(lastName))
         {
             return res.status(400).json({message:"Please provide valid last name."})
         }
-        if(!numberValidation(mobileNo))
+        if(!mobileNo || !numberValidation(mobileNo))
         {
             return res.status(400).json({message:"Please provide valid mobile No."})
         }
@@ -97,7 +97,7 @@ const signIn=async(req,res)=>{
                 let data={"Public_Key":publicKey,Updated_On:moment.utc().format("YYYY-MM-DD"),Updated_By:userDetails.User_Id};
                 let userId=await updateIntoTable(databaseConnection,data,tables.userBasicDetails,userDetails.User_Id);
                 let token=jwt.sign({ userId:userDetails.User_Id,email: email }, SECRET_KEY);
-                return res.status(201).json({userId:userDetails.User_Id,token:token,publicKey:publicKey,privateKey:privateKey});
+                return res.status(200).json({userId:userDetails.User_Id,token:token,publicKey:publicKey,privateKey:privateKey});
             }
         }
         else{
