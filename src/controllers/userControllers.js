@@ -2,6 +2,8 @@
 const moment = require('moment');
 const bcrypt=require('bcrypt');
 const jwt = require('jsonwebtoken');
+// require knex for database connection
+var knex = require('knex');
 
 const {checkExistingUser,insertIntoTable,getUserDetailsBasedOnEmail,generatePublicAndPrivateKeyUsingLibSodium,updateIntoTable} =require('../common/commonFunction');
 const { emailValidation, firstLastNameValidation, numberValidation } = require('../common/commonValidator');

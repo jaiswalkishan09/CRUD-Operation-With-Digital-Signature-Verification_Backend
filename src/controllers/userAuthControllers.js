@@ -3,7 +3,7 @@ const moment = require('moment');
 var knex = require('knex');
 
 const { tables } = require('../common/tableAlias');
-const {updateIntoTable,getUserDetailsBasedOnUserId} =require('../common/commonFunction');
+const {updateIntoTable,getUserDetailsBasedOnUserId,verifySignature} =require('../common/commonFunction');
 const {  firstLastNameValidation, numberValidation } = require('../common/commonValidator');
 const dbConnection=require("../common/connection")
 
@@ -119,14 +119,24 @@ const verifyMessage=async(req,res)=>{
     let userId=req.userId;
     try{
         let userDetails=await getUserDetailsBasedOnUserId(databaseConnection,userId);
+        if(!userDetails)
+        {
+            throw("Error while getting the user details")
+        }
         let publicKey=userDetails['Public_Key'];
         let signResult=await verifySignature(signature,message,publicKey);
         databaseConnection?databaseConnection.destroy():null;
-        if(signResult)
+        if(signResult=="Success")
         {
             return res.status(200).json({message:"Orignal Message"})
         }
-        return res.status(400).json({message:"Message was changed"});
+        else if(signResult=="Failed")
+        {
+            return res.status(400).json({message:"Message was changed"});
+        }
+        else{
+            throw("Error Occurred while verifying signature")
+        }
     }
     catch(e)
     {
