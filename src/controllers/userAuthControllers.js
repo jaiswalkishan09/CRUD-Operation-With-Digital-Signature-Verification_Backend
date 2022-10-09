@@ -21,7 +21,6 @@ const getUserDetails=async (req,res)=>{
                 {
                     data=data[0];
                 }
-                console.log(data)
                 databaseConnection?databaseConnection.destroy():null;
                 return res.status(200).json({userId:userId,firstName:data.firstName,lastName:data.lastName,email:data.email,mobileNo:data.mobileNo});
             })
