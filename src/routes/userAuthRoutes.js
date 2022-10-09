@@ -11,6 +11,6 @@ userAuthRouter.put("/updateUserDetails",auth,updateUserDetails);
 
 userAuthRouter.delete("/deleteUser",auth,deleteUser);
 
-userAuthRouter.get("/verify",auth,verifyMessage);
+userAuthRouter.post("/verify",auth,verifyMessage);
 
 module.exports = userAuthRouter;

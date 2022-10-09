@@ -10,18 +10,18 @@ const auth=(req,res,next)=>{
            req.userId = user.userId;
            if(!req.userId)
            {
-            res.status(401).json({message:"Unauthorized User"})
+            return res.status(401).json({message:"Unauthorized User"})
            }
         }
         else{
-           res.status(401).json({message:"Unauthorized User"})
+           return res.status(401).json({message:"Unauthorized User"})
         }
         next();
     }
     catch(e)
     {
         console.log("Error in auth main catch block",e);
-        res.status(401).json({message:"Unauthorized User"})
+        return res.status(401).json({message:"Unauthorized User"})
     }
 }
 
