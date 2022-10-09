@@ -11,24 +11,31 @@ const verifyBodyRequest=async(req,res,next)=>{
     let message=JSON.stringify(jsonObject);
     let userId=req.userId;
     try{
-        let userDetails=await getUserDetailsBasedOnUserId(databaseConnection,userId);
-        if(!userDetails)
+        if(signature)
         {
-            throw("Error while getting the user details")
-        }
-        let publicKey=userDetails['Public_Key'];
-        let signResult=await verifySignature(signature,message,publicKey);
-        databaseConnection?databaseConnection.destroy():null;
-        if(signResult=="Success")
-        {
-            next();
-        }
-        else if(signResult=="Failed")
-        {
-            return res.status(400).json({message:"Message was changed"});
+            let userDetails=await getUserDetailsBasedOnUserId(databaseConnection,userId);
+            if(!userDetails)
+            {
+                throw("Error while getting the user details")
+            }
+            let publicKey=userDetails['Public_Key'];
+            let signResult=await verifySignature(signature,message,publicKey);
+            databaseConnection?databaseConnection.destroy():null;
+            if(signResult=="Success")
+            {
+                next();
+            }
+            else if(signResult=="Failed")
+            {
+                databaseConnection?databaseConnection.destroy():null;
+                return res.status(400).json({message:"Message was changed"});
+            }
+            else{
+                throw("Error Occurred while verifying signature")
+            }
         }
         else{
-            throw("Error Occurred while verifying signature")
+            return res.status(400).json({message:"Bad Request."});
         }
     }
     catch(e)

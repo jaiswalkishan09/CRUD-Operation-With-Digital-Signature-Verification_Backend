@@ -114,7 +114,6 @@ const verifyMessage=async(req,res)=>{
     let connectDb= await dbConnection.getDataBaseConnection();
     const databaseConnection  =knex(connectDb.connection);
     let signature=req.headers.signature;
-    console.log(signature,"dafafd")
     let {message}=req.body;
     let userId=req.userId;
     try{
