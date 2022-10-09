@@ -3,7 +3,6 @@ const {getUserDetailsBasedOnUserId,verifySignature}=require("../common/commonFun
 // require knex for database connection
 var knex = require('knex');
 
-
 const verifyBodyRequest=async(req,res,next)=>{
     let connectDb= await dbConnection.getDataBaseConnection();
     const databaseConnection  =knex(connectDb.connection);
